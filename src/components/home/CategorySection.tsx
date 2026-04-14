@@ -1,5 +1,4 @@
 import Header from '@components/shared/Header'
-import Skelton from '@components/shared/Skelton'
 import { ArrowLeft, Search } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'

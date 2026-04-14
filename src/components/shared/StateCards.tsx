@@ -1,4 +1,3 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 import { Wallet, ShoppingCart } from 'lucide-react'
 import { fadeUp } from '@/lib/animations'

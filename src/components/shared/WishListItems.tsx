@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetProductById } from '@/lib/queries'
 import { useNavigate } from 'react-router-dom'
 const WishListItems = ({product_id}: {product_id: string}) => {

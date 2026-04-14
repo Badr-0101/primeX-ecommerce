@@ -8,7 +8,6 @@ const SignIn = lazy(() => import('@components/auth/SignIn'))
 const SignUp = lazy(() => import('@components/auth/SignUp'))
 const FavoritePrudoct = lazy(() => import('@pages/FavoritePrudoct'))
 const OrdarsInformation = lazy(() => import('@/pages/Account/OrdarsInformation'))
-const UserProfilePage = lazy(() => import('@/pages/Account/UserProfilePage'))
 const ProductDetails = lazy(() => import('@/pages/ProductDetails'))
 const ProtectRoutes = lazy(() => import('@/routes/ProtectRoutes'))
 const CheckOut = lazy(() => import('@/pages/checkout/CheckOut'))
@@ -28,7 +27,6 @@ const AppRoutes = () => {
         <Route path="/checkout" element={<Suspense fallback={<LoadngSpinner />}><CheckOut /></Suspense>} />
         <Route   path="/my-account" element={<Suspense fallback={<LoadngSpinner />}><AccountLayout /></Suspense>} >
           <Route index element={<Suspense fallback={<LoadngSpinner />}><OrdarsInformation /></Suspense>} />
-          <Route path="profile" element={<Suspense fallback={<LoadngSpinner />}><UserProfilePage /></Suspense>} />
           <Route path="orders-history" element={<Suspense fallback={<LoadngSpinner />}><UserOrdersHistory /></Suspense>} />
         </Route>
       </Route>

@@ -1,4 +1,3 @@
-import React from 'react'
 import GYMLOADING from "@/assets/GYMLOADING.webm"
 const LoadngSpinner = () => {
   return (

@@ -1,4 +1,3 @@
-import React from 'react'
 import Counter from './Counter'
 import { ShoppingCart } from 'lucide-react'
 type  Props = {

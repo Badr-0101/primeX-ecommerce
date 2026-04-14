@@ -21,22 +21,22 @@ const itemVariants = {
 const ShoppingCart = () => {
   const user = useAppSelector((state) => state.auth.user)
   const navigate = useNavigate()
-  const { data: cartItems = [], isLoading } = useGetCartItems(user?.id)
+  const { data: cartItems = [] } = useGetCartItems(user?.id || '')
   const { mutate: addToCartMutation } = useAddToCart()
   const { mutate: removeCartItemMutation } = useRemoveCartItem()
 
-  const updateQuantity = (productId: number, quantity: number) => {
+  const updateQuantity = (productId: string, quantity: number) => {
   if (!user?.id) return
 
   addToCartMutation({
     userId: user.id,
-    productId: productId.toString(),
+    productId,
     quantity,
   })
 }
 
-  const deleteItem = (id: number) => {
-    removeCartItemMutation({ userId: user?.id, productId: id.toString() })
+  const deleteItem = (id: string) => {
+    removeCartItemMutation({ userId: user?.id || '', productId: id })
   }
 
   return (
@@ -94,7 +94,7 @@ const ShoppingCart = () => {
 
                         </div>
                         <button
-                          onClick={() => deleteItem(item.product?.id)}
+                          onClick={() => item.product?.id && deleteItem(item.product.id)}
                           className="text-[rgba(255,255,255,0.25)] hover:text-red-400 transition-colors duration-200 cursor-pointer bg-transparent border-none shrink-0 p-1"
                         >
                           <Trash2 size={18} />
@@ -105,10 +105,10 @@ const ShoppingCart = () => {
                       <div className="flex items-center justify-between mt-4">
                         <Counter
                           value={item.quantity}
-                          onChange={(n) => updateQuantity(item.product?.id, n)}
+                          onChange={(n) => item.product?.id && updateQuantity(item.product.id, n)}
                         />
                         <span className="text-primary font-black text-lg sm:text-xl tracking-tight">
-                          ${(item.product?.price * item.quantity).toFixed(2)}
+                          ${((item.product?.price ?? 0) * item.quantity).toFixed(2)}
                         </span>
                       </div>
                     </div>

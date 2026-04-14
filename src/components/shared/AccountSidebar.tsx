@@ -52,7 +52,13 @@ const AccountSidebar = () => {
               <motion.button
                 key={item.label}
                 variants={itemVariants}
-                onClick={() => navigate(item.path)}
+                onClick={() => {
+                  if (item.onClick) {
+                    item.onClick()
+                  } else if (item.path) {
+                    navigate(item.path)
+                  }
+                }}
                 whileHover={{ x: -3 }}
                 whileTap={{ scale: 0.97 }}
                 className={`

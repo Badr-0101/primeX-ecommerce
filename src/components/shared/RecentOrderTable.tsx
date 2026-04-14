@@ -1,4 +1,3 @@
-import React from 'react'
 import { ChevronLeft } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { stagger, rowVariant } from '@/lib/animations'

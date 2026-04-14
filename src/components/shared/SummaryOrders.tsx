@@ -1,8 +1,7 @@
-import React from 'react'
 import {type CartItemRow } from '@/types'
 
 const SummaryOrders = ({cartItems}: {cartItems: CartItemRow[]}) => {
-      const subtotal = cartItems.reduce((sum, item) => sum + item.product?.price * item.quantity, 0)
+      const subtotal = cartItems.reduce((sum, item) => sum + (item.product?.price ?? 0) * item.quantity, 0)
       const shipping = 0    
       const total = subtotal + shipping
   return (
