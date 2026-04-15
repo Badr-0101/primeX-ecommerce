@@ -3,7 +3,6 @@ import type { Product } from "@/types"
 import { useGetCategoryById } from "@/lib/queries"
 import useProductLogic from "@/hooks/useProductLogic"
 import { Heart } from "lucide-react"
-import ProductBuyButtonWithCounter from "./ProductBuyButtonWithCounter"
 
 const containerVariants: Variants = {
     hidden: { opacity: 0, scale: 0.95 },
