@@ -11,6 +11,7 @@ import {
   getProductsByCategory,
   searchProducts,
   getProductsBySearch,
+  getProductsByCategoryId,
   // Cart
   addToCart,
   getCartItems,
@@ -112,6 +113,15 @@ export const useGetProducts = (page: number, pageSize: number, sortBy: string, f
     queryFn: () => getProducts(page, pageSize, sortBy, filters),
     placeholderData: (previousData) => previousData,
   });
+  /**fetch all products by category id */
+  export const useGetProductsByCategoryId = (page: number, pageSize: number, sortBy: string, filters?: import('./api').ProductFilters, categoryId?: string, options?: { enabled?: boolean }) =>
+    useQuery({
+      queryKey: ['products', page, pageSize, sortBy, filters, categoryId],
+      queryFn: () => getProductsByCategoryId(page, pageSize, sortBy, filters, categoryId),
+      placeholderData: (previousData) => previousData,
+      enabled: options?.enabled,
+      
+    });
 
 /** Fetch product counts per category */
 export const useGetProductCountsByCategory = () =>

@@ -13,6 +13,8 @@ const ProtectRoutes = lazy(() => import('@/routes/ProtectRoutes'))
 const CheckOut = lazy(() => import('@/pages/checkout/CheckOut'))
 const UserOrdersHistory = lazy(() => import('@/pages/UserOrdersHistory'))
 const LoadngSpinner = lazy(() => import('@/components/shared/LoadngSpinner'))
+const ProductsByCategory = lazy(() => import('@/pages/ProductsByCategory'))
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -22,6 +24,7 @@ const AppRoutes = () => {
       <Route path="/signin" element={<Suspense fallback={<LoadngSpinner />}><SignIn /></Suspense>} />
       <Route path="/signup" element={<Suspense fallback={<LoadngSpinner />}><SignUp /></Suspense>} />
       <Route path="/product-details/:id" element={<Suspense fallback={<LoadngSpinner />}><ProductDetails /></Suspense>} />
+      <Route path="/products-by-category/:id" element={<Suspense fallback={<LoadngSpinner />}><ProductsByCategory /></Suspense>} />
       <Route element={<ProtectRoutes />} >
         <Route path="/favorite" element={<Suspense fallback={<LoadngSpinner />}><FavoritePrudoct /></Suspense>} />
         <Route path="/checkout" element={<Suspense fallback={<LoadngSpinner />}><CheckOut /></Suspense>} />

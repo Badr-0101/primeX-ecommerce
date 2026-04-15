@@ -4,19 +4,22 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingBag, Heart, User, Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard } from 'lucide-react'
 import logo from "@assets/logo.jpg"
 import { useAppSelector } from '@/store/index'
-import useSearch from '@/hooks/useSearch' 
+import SearchBar from '@/components/shared/SearchBar' 
 import { signOut } from '@/lib/api'
-import { useGetMyFavorites } from '@/lib/queries'
+import { useGetMyFavorites,useGetProductsBySearch } from '@/lib/queries'
 import { useGetCartItems } from '@/lib/queries'
+
 const Navbar = () => {
+
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [searchItem, setSearchItem] = useState("");
   const isLogin = useAppSelector((state) => state.auth.user)
   const userId = isLogin?.id || ""
+
+  const { data: products, isLoading } = useGetProductsBySearch(searchItem);
   const { data: favorites } = useGetMyFavorites(userId)
   const favoritesCount = favorites?.length || 0
-  // ✅ Single hook call — one source of truth for search state
-  const { SearchUI } = useSearch()
   const { data: cartItems = [] } = useGetCartItems(userId)
   const cartQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
@@ -126,7 +129,7 @@ const Navbar = () => {
 
               {/* ✅ Desktop Search */}
               <li>
-                <SearchUI />
+                <SearchBar isMobile={false} searchItem={searchItem} setSearchItem={setSearchItem} products={products} isLoading={isLoading} />
               </li>
 
             </ul>
@@ -179,7 +182,7 @@ const Navbar = () => {
               <div className="p-4 flex flex-col gap-4">
 
                 {/* ✅ Mobile Search — same hook, same state */}
-                <SearchUI />
+                <SearchBar isMobile={true} searchItem={searchItem} setSearchItem={setSearchItem} products={products} isLoading={isLoading} />
 
                 <button
                   onClick={() => { navigate("/favorite"); setMobileOpen(false) }}

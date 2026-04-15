@@ -12,13 +12,8 @@ const Hero = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative rounded-lg overflow-hidden w-full h-[280px] sm:h-[380px] md:h-[450px] lg:h-[514px]"
-          style={{
-            backgroundImage: `url(${background})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}
         >
+          <img src={background} alt="" className="w-full h-full object-cover " />
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 sm:gap-5 text-white px-4">
             <motion.p
               initial={{ opacity: 0, y: -20 }}

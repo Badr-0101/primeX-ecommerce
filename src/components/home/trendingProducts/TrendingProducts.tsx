@@ -66,7 +66,7 @@ const TrendingProducts = () => {
         {/* --- Products Grid --- */}
         <motion.div
           key={activeCategoryId || 'all'} // Key forces animation reset on category change
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-12"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center gap-6 mt-12"
           initial="hidden"
           animate="visible"
           variants={containerVariants}

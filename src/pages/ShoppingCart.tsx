@@ -19,24 +19,24 @@ const itemVariants = {
 }
 
 const ShoppingCart = () => {
-  const user = useAppSelector((state) => state.auth.user)
+  const { user } = useAppSelector((state) => state.auth)
   const navigate = useNavigate()
-  const { data: cartItems = [] } = useGetCartItems(user?.id || '')
+  const { data: cartItems = [], isLoading } = useGetCartItems(user?.id || '')
   const { mutate: addToCartMutation } = useAddToCart()
   const { mutate: removeCartItemMutation } = useRemoveCartItem()
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = (productId: number, quantity: number) => {
   if (!user?.id) return
 
   addToCartMutation({
     userId: user.id,
-    productId,
+    productId: productId.toString(),
     quantity,
   })
 }
 
-  const deleteItem = (id: string) => {
-    removeCartItemMutation({ userId: user?.id || '', productId: id })
+  const deleteItem = (id: number) => {
+    removeCartItemMutation({ userId: user?.id, productId: id.toString() })
   }
 
   return (
@@ -60,6 +60,11 @@ const ShoppingCart = () => {
             </motion.div>
 
             {/* Items list */}
+            {isLoading ? (
+              <div className="flex items-center justify-center py-20 text-center">
+                <p className="text-[rgba(255,255,255,0.4)] text-lg mb-2">جاري التحميل...</p>
+              </div>
+            ) : ( 
             <motion.div
               className="flex flex-col gap-4"
               variants={containerVariants}
@@ -94,7 +99,7 @@ const ShoppingCart = () => {
 
                         </div>
                         <button
-                          onClick={() => item.product?.id && deleteItem(item.product.id)}
+                          onClick={() => deleteItem(item.product?.id)}
                           className="text-[rgba(255,255,255,0.25)] hover:text-red-400 transition-colors duration-200 cursor-pointer bg-transparent border-none shrink-0 p-1"
                         >
                           <Trash2 size={18} />
@@ -105,10 +110,10 @@ const ShoppingCart = () => {
                       <div className="flex items-center justify-between mt-4">
                         <Counter
                           value={item.quantity}
-                          onChange={(n) => item.product?.id && updateQuantity(item.product.id, n)}
+                          onChange={(n) => updateQuantity(item.product?.id, n)}
                         />
                         <span className="text-primary font-black text-lg sm:text-xl tracking-tight">
-                          ${((item.product?.price ?? 0) * item.quantity).toFixed(2)}
+                          ${(item.product?.price * item.quantity).toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -128,7 +133,7 @@ const ShoppingCart = () => {
                 </motion.div>
               )}
             </motion.div>
-
+            )}
             {/* Continue shopping */}
             <motion.a
               href="/"

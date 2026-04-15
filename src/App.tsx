@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useDispatch } from 'react-redux'
 import { setUser, clearUser, setLoading } from '@/store/authSlice'
+import ScrollToTop from '@/components/shared/ScrollToTop';
 
 function App() {
   const dispatch = useDispatch()
@@ -28,7 +29,10 @@ function App() {
 }, [])
 
   return (
-    <AppRoutes />
+    <>
+      <ScrollToTop />
+      <AppRoutes />
+    </>
   );
 }
 

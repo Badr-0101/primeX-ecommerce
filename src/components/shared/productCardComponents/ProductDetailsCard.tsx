@@ -18,7 +18,7 @@ const containerVariants: Variants = {
 }
 
 const ProductDetailsCard = ({ product }: { product: Product }) => {
-    const {count, setCount, added, handleAddToCart,handleFavoriteToggle,liked} = useProductLogic({ product })
+    const {handleFavoriteToggle,liked} = useProductLogic({ product })
     const {data: category} = useGetCategoryById(product.category_id!)
     return (
             <motion.div
@@ -32,13 +32,13 @@ const ProductDetailsCard = ({ product }: { product: Product }) => {
                 <img 
                     src={product.image_url} 
                     alt={product.name} 
-                    className="w-full h-48 object-contain md:max-h-[400px]" 
+                    className="w-full h-48 object-contain md:h-[200px] md:w-[200px] md:max-h-[200px] md:max-w-[200px]  " 
                 />
                            {/* Wishlist button */}
             <button
                 onClick={handleFavoriteToggle}
             className={`
-                absolute   top-[18px] right-[73px] md:top-[31px] md:right-[46px]
+                absolute   top-[18px] right-[50px] md:top-[31px] md:right-[46px]
                 w-[38px] h-[38px] rounded-full
                 flex items-center justify-center
                 cursor-pointer backdrop-blur-[8px]
@@ -69,15 +69,6 @@ const ProductDetailsCard = ({ product }: { product: Product }) => {
                     </span>
                 </div>
 
-                {/* Status Section */}
-                <div className="mt-8 space-y-4">
-
-
-                    {/* Social/Action Buttons */}
-                    <div className="flex gap-4">
-                        <ProductBuyButtonWithCounter count={count} setCount={setCount} added={added} handleAddToCart={handleAddToCart} />
-                    </div>
-                </div>
 
                 {/* Category Badge */}
                 <div className="mt-10 flex items-center gap-2 text-sm">

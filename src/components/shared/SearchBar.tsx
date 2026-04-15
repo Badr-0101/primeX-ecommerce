@@ -1,14 +1,19 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useGetProductsBySearch } from "@/lib/queries";
+
 import { Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { type Product } from "@/types";
+type SearchUIProps = {
+    isMobile?: boolean;
+    searchItem: string;
+    setSearchItem: (value: string) => void;
+    products?: Product[];
+    isLoading: boolean;
+}
+  
 
-const useSearch = () => {
-  const [searchItem, setSearchItem] = useState("");
-  const navigate = useNavigate();
-  const { data: products, isLoading } = useGetProductsBySearch(searchItem);
-
-  const SearchUI = ({ isMobile = false }: { isMobile?: boolean }) => (
+const SearchBar = ({ isMobile = false, searchItem, setSearchItem, products, isLoading }: SearchUIProps) => {
+    const navigate = useNavigate();
+    return (
     <div className="flex items-center gap-2 relative w-full">
       <Search className={`absolute right-3 ${isMobile ? "text-blackblue" : "text-black"}`} size={18} />
       
@@ -33,7 +38,7 @@ const useSearch = () => {
       {searchItem && (
         <div className="absolute z-[60] top-full right-0 bg-white text-black w-64 max-h-64 overflow-y-auto flex flex-col rounded-xl shadow-xl mt-2 p-2 gap-2">
           {(products?.length ?? 0) > 0 ? (
-            products?.map((product: any) => (
+            products?.map((product: Product) => (
               <div
                 key={product.id}
                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition cursor-pointer"
@@ -57,7 +62,7 @@ const useSearch = () => {
     </div>
   );
 
-  return { SearchUI };
+
 };
 
-export default useSearch;
+export default SearchBar;

@@ -11,7 +11,7 @@ const ProductCard = ({ product }: { product: Product }) => {
   const navigate = useNavigate()
 
   return (
-    <div className="product-card max-w-2xs m-auto">
+    <div className="product-card max-w-2xs  ">
 
       {/* ── Top glow bar (defined in index.css) ── */}
       <div className="product-card-glowBar" />

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import ProductCard from '@/components/shared/productCardComponents/ProductCard'
 import FilterProducts from './FilterProducts'
-import { useGetProducts } from '@/lib/queries'
+import { useGetProducts,useGetProductsByCategoryId } from '@/lib/queries'
 import type { ProductFilters } from '@/lib/api'
 
 const ITEMS_PER_PAGE = 6
@@ -28,16 +28,27 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 }
 
-const ProductCatalog = () => {
+const ProductCatalog = ({ categoryId }: { categoryId?: string }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [sortBy, setSortBy] = useState('newest')
   const [filters, setFilters] = useState<ProductFilters>({})
+  const { data, isLoading: isLoadingAll, isPlaceholderData: isPlaceholderAll } =
+    useGetProducts(currentPage, ITEMS_PER_PAGE, sortBy, filters)
 
-  const { data, isLoading, isPlaceholderData } = useGetProducts(currentPage, ITEMS_PER_PAGE, sortBy, filters)
+  const { data: productsByCategory, isLoading: isLoadingCategory, isPlaceholderData: isPlaceholderCategory } =
+    useGetProductsByCategoryId(currentPage, ITEMS_PER_PAGE, sortBy, filters, categoryId!, {
+      enabled: !!categoryId,
+    })
+  
+  const activeData = categoryId ? productsByCategory : data
+  const isLoading = categoryId ? isLoadingCategory : isLoadingAll
+  const isPlaceholderData = categoryId ? isPlaceholderCategory : isPlaceholderAll
 
-  const products = data?.data || []
-  const totalCount = data?.count || 0
+  const products = activeData?.data || []
+  const totalCount = activeData?.count || 0
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE)
+
+ 
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page)
@@ -86,85 +97,102 @@ const ProductCatalog = () => {
 
       {/* Main layout: filter + grid */}
       <div className="flex gap-6 lg:gap-8">
+
         {/* Filter sidebar */}
-        <FilterProducts filters={filters} onFilterChange={handleFilterChange} />
+        {!categoryId && (
+          <FilterProducts filters={filters} onFilterChange={handleFilterChange} />
+        )}
 
         {/* Product grid */}
-        <div className="flex-1 min-w-0">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-20 text-center">
-              <p className="text-[rgba(255,255,255,0.4)] text-lg mb-2">جاري التحميل...</p>
-            </div>
-          ) : products.length > 0 ? (
-            <motion.div
-              key={`${sortBy}-${currentPage}-${JSON.stringify(filters)}`}
-              className={`grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 transition-opacity duration-200 ${
-                isPlaceholderData ? 'opacity-50' : 'opacity-100'
-              }`}
-              initial="hidden"
-              animate="visible"
-              variants={containerVariants}
-            >
-              {products.map((product) => (
-                <motion.div key={product.id} variants={itemVariants}>
-                  <ProductCard product={product} />
-                </motion.div>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center py-20 text-center"
-            >
-              <p className="text-[rgba(255,255,255,0.4)] text-lg mb-2">لا توجد منتجات</p>
-              <p className="text-[rgba(255,255,255,0.25)] text-sm">حاول تغيير الفلاتر</p>
-            </motion.div>
-          )}
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-10">
-              {/* Previous (ChevronRight in RTL) */}
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer border-none transition-all duration-200
-                  ${currentPage === 1
-                    ? 'bg-[rgba(255,255,255,0.04)] text-[rgba(255,255,255,0.2)] cursor-not-allowed'
-                    : 'bg-[#1a1b23] text-white hover:bg-primary hover:text-black'}`}
-              >
-                <ChevronRight size={18} />
-              </button>
-
-              {/* Page Numbers */}
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer border-none text-sm font-bold transition-all duration-200
-                    ${page === currentPage
-                      ? 'bg-primary text-black shadow-[0_0_15px_rgba(185,242,13,0.4)]'
-                      : 'bg-[#1a1b23] text-[rgba(255,255,255,0.5)] hover:bg-[rgba(255,255,255,0.1)] hover:text-white'}`}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20 text-center">
+            <p className="text-[rgba(255,255,255,0.4)] text-lg mb-2">جاري التحميل...</p>
+          </div>
+        ) : (
+        <div>
+          {products.length > 0 ? (
+            <div className="flex-1 min-w-0">
+              {isLoading ? (
+                <div className="flex items-center justify-center py-20 text-center">
+                  <p className="text-[rgba(255,255,255,0.4)] text-lg mb-2">جاري التحميل...</p>
+                </div>
+              ) : products.length > 0 ? (
+                <motion.div
+                  key={`${sortBy}-${currentPage}-${JSON.stringify(filters)}`}
+                  className={`grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 transition-opacity duration-200 ${isPlaceholderData ? 'opacity-50' : 'opacity-100'
+                    }`}
+                  initial="hidden"
+                  animate="visible"
+                  variants={containerVariants}
                 >
-                  {page}
-                </button>
-              ))}
+                  {products.map((product) => (
+                    <motion.div key={product.id} variants={itemVariants}>
+                      <ProductCard product={product} />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex flex-col items-center justify-center py-20 text-center"
+                >
+                  <p className="text-[rgba(255,255,255,0.4)] text-lg mb-2">لا توجد منتجات</p>
+                  <p className="text-[rgba(255,255,255,0.25)] text-sm">حاول تغيير الفلاتر</p>
+                </motion.div>
+              )}
 
-              {/* Next (ChevronLeft in RTL) */}
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className={`w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer border-none transition-all duration-200
-                  ${currentPage === totalPages
-                    ? 'bg-[rgba(255,255,255,0.04)] text-[rgba(255,255,255,0.2)] cursor-not-allowed'
-                    : 'bg-[#1a1b23] text-white hover:bg-primary hover:text-black'}`}
-              >
-                <ChevronLeft size={18} />
-              </button>
+            
+            </div>)
+            :(
+              <div className="flex items-center justify-center py-20 text-center">
+                <p className="text-[rgba(255,255,255,0.4)] text-lg mb-2">لا توجد منتجات</p>
+              </div>
+            )}
+          {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-10">
+                  {/* Previous (ChevronRight in RTL) */}
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer border-none transition-all duration-200
+                    ${currentPage === 1
+                        ? 'bg-[rgba(255,255,255,0.04)] text-[rgba(255,255,255,0.2)] cursor-not-allowed'
+                        : 'bg-[#1a1b23] text-white hover:bg-primary hover:text-black'}`}
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+
+                  {/* Page Numbers */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer border-none text-sm font-bold transition-all duration-200
+                      ${page === currentPage
+                          ? 'bg-primary text-black shadow-[0_0_15px_rgba(185,242,13,0.4)]'
+                          : 'bg-[#1a1b23] text-[rgba(255,255,255,0.5)] hover:bg-[rgba(255,255,255,0.1)] hover:text-white'}`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  {/* Next (ChevronLeft in RTL) */}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer border-none transition-all duration-200
+                    ${currentPage === totalPages
+                        ? 'bg-[rgba(255,255,255,0.04)] text-[rgba(255,255,255,0.2)] cursor-not-allowed'
+                        : 'bg-[#1a1b23] text-white hover:bg-primary hover:text-black'}`}
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                </div>
+            )}
             </div>
-          )}
-        </div>
+            )}
       </div>
     </div>
   )

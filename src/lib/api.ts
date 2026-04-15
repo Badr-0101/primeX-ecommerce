@@ -147,6 +147,53 @@ export async function getProductCountsByCategory(): Promise<{ category_id: strin
 
   return Object.entries(counts).map(([category_id, count]) => ({ category_id, count }))
 }
+/**fetch all products by category id */
+export async function getProductsByCategoryId(page: number, pageSize: number, sortBy: string, filters?: ProductFilters, categoryId?: string): Promise<{ data: Product[], count: number }> {
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let query = supabase
+    .from('products')
+    .select(`*, category:categories(*)`, { count: 'exact' });
+
+  // Apply filters
+  if (categoryId) {
+    query = query.eq('category_id', categoryId);
+  }
+  if (filters?.priceMin !== undefined) {
+    query = query.gte('price', filters.priceMin);
+  }
+  if (filters?.priceMax !== undefined) {
+    query = query.lte('price', filters.priceMax);
+  }
+
+  // Apply sorting
+  switch (sortBy) {
+    case 'price-asc':
+      query = query.order('price', { ascending: true });
+      break;
+    case 'price-desc':
+      query = query.order('price', { ascending: false });
+      break;
+    case 'name':
+      query = query.order('name', { ascending: true });
+      break;
+    default:
+      query = query.order('created_at', { ascending: false });
+  }
+
+  const { data, error, count } = await query.range(from, to);
+
+  if (error) {
+    console.error('getProducts error:', error);
+    return { data: [], count: 0 };
+  }
+
+  return { 
+    data: data as Product[], 
+    count: count || 0 
+  };
+}
 
 /** Fetch a single product by ID */
 export async function getProductById(id: string): Promise<Product> {

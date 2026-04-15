@@ -1,7 +1,19 @@
 import { LocateIcon, PhoneIcon, MailIcon, ClockIcon } from "lucide-react";
 import logo from "@assets/logo.jpg"
-
+import { useGetCategories ,useGetProductCountsByCategory} from "@/lib/queries";
 export default function Footer() {
+  const { data: categories } = useGetCategories();
+  const { data: productCounts } = useGetProductCountsByCategory();  
+  const categoryInfo = categories?.map((cat) => { 
+    return {
+      id: cat.id, 
+      name: cat.name,
+      count: productCounts?.filter((count) => count.category_id === cat.id)[0]?.count || 0
+    }
+  })
+  const firstCategoryHalf = categoryInfo?.slice(0, Math.ceil(categoryInfo.length / 2));
+  const secondCategoryHalf = categoryInfo?.slice(Math.ceil(categoryInfo.length / 2));
+  
   return (
     <footer className="w-full bg-[#0A0A0A] relative overflow-hidden">
 
@@ -42,8 +54,8 @@ export default function Footer() {
           <ul className="flex flex-col gap-3.5 items-start">
             {[
               { icon: <LocateIcon size={16} />, text: "مصر - القاهرة" },
-              { icon: <PhoneIcon size={16} />, text: "+201027065509" },
-              { icon: <MailIcon size={16} />, text: "alngarracer46@gmail.com" },
+              { icon: <PhoneIcon size={16} />, text: "01012232962" },
+              { icon: <MailIcon size={16} />, text: "badr71444@gmail.com" },
               { icon: <ClockIcon size={16} />, text: "9:00 ص – 12:00 م" },
             ].map((item, i) => (
               <li key={i} className="flex items-center justify-end gap-3 text-[#CCC] text-xs sm:text-sm font-medium group">
@@ -65,25 +77,16 @@ export default function Footer() {
           </h3>
 
           <ul className="flex flex-col gap-2.5">
-            {[
-              ["احماض امينية", 22],
-              ["مكملات كرياتين", 25],
-              ["مكملات بروتين", 23],
-              ["فيتامينات ومعادن", 24],
-              ["مكملات طاقة", 19],
-              ["الماس جينز وزيادة الوزن", 10],
-              ["حوارق دهون", 7],
-              ["مكملات كربوهيدرات", 2],
-            ].map(([name, count], i) => (
-              <li key={i}>
+            {firstCategoryHalf?.map((item) => (
+              <li key={item.name}>
                 <a
-                  href="#"
+                  href={`/products-by-category/${item.id}`}
                   className="flex items-center justify-between text-[#CCC] text-xs sm:text-sm font-medium py-[6px] border-b border-[rgba(255,255,255,0.04)] hover:text-[#B9F20D] hover:pr-[6px] transition"
                 >
                   <span className="text-[10px] sm:text-[11px] text-[#888] bg-[rgba(255,255,255,0.06)] rounded-[10px] px-2 py-[1px] font-semibold">
-                    {count}
+                    {item.count}
                   </span>
-                  {name}
+                  {item.name}
                 </a>
               </li>
             ))}
@@ -97,20 +100,16 @@ export default function Footer() {
           </h3>
 
           <ul className="flex flex-col gap-2.5">
-            {[
-              ["محفزات تستسترون", 3],
-              ["منتجات اخرى", 6],
-              ["اكسسوارات", 3],
-            ].map(([name, count], i) => (
-              <li key={i}>
+            {secondCategoryHalf?.map((item) => (
+              <li key={item.name}>
                 <a
-                  href="#"
+                  href={`/products-by-category/${item.id}`}  
                   className="flex items-center justify-between text-[#CCC] text-xs sm:text-sm font-medium py-[6px] border-b border-[rgba(255,255,255,0.04)] hover:text-[#B9F20D] hover:pr-[6px] transition"
                 >
                   <span className="text-[10px] sm:text-[11px] text-[#888] bg-[rgba(255,255,255,0.06)] rounded-[10px] px-2 py-[1px] font-semibold">
-                    {count}
+                    {item.count}
                   </span>
-                  {name}
+                  {item.name}
                 </a>
               </li>
             ))}
@@ -127,7 +126,7 @@ export default function Footer() {
       {/* Bottom */}
       <div className="max-w-[1200px] mx-auto px-4 sm:px-8 py-6 text-center relative">
         <p className="text-[12px] sm:text-[13px] text-[#888] font-medium text-center">
-          © 2024 <span className="text-[#B9F20D]">Prime X</span> — جميع الحقوق محفوظة
+          © 2024 <span className="text-primary">Prime X</span> — جميع الحقوق محفوظة
         </p>
       </div>
     </footer>
