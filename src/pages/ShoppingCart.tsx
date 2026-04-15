@@ -25,19 +25,19 @@ const ShoppingCart = () => {
   const { mutate: addToCartMutation } = useAddToCart()
   const { mutate: removeCartItemMutation } = useRemoveCartItem()
 
-  const updateQuantity = (productId: string | number, quantity: number) => {
+  const updateQuantity = (productId: string, quantity: number) => {
   if (!user?.id) return
 
   addToCartMutation({
     userId: user.id,
-    productId: productId.toString(),
+    productId: productId,
     quantity,
   })
 }
 
-  const deleteItem = (id: string | number) => {
+  const deleteItem = (id: string) => {
     if (!user?.id) return;
-    removeCartItemMutation({ userId: user.id, productId: id.toString() })
+    removeCartItemMutation({ userId: user.id, productId: id })
   }
 
   return (
